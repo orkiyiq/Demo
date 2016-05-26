@@ -1,0 +1,60 @@
+apply plugin: 'com.android.application'
+
+android {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    productFlavors{
+        flavor{
+            applicationId="com.roy.util.demo.flavor"
+            manifestPlaceholders = [ CH_NAME:properties.getProperty("flavor_CH_NAME"),APP_NAME:properties.getProperty("flavor_APP_NAME")]
+        }
+        top{
+            applicationId="com.roy.util.demo.top"
+            manifestPlaceholders = [ CH_NAME:properties.getProperty("top_CH_NAME"),APP_NAME:properties.getProperty("top_APP_NAME")]
+        }
+    }
+
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+    defaultConfig {
+        applicationId "com.roy.util.demo"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        manifestPlaceholders = [APP_NAME:"Default",CH_NAME:"Default"]
+
+    }
+    signingConfigs {
+        release {
+            storeFile file("demo.keystore")
+            storePassword properties.getProperty("keystorePW")
+            keyAlias "util.keystore"
+            keyPassword properties.getProperty("keyPW")
+/*            storeFile file("demo.keystore")
+            storePassword "123456"
+            keyAlias "util.keystore"
+            keyPassword "123456"*/
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+        }
+
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+    dependencies {
+        compile fileTree(include: ['*.jar'], dir: 'libs')
+        testCompile 'junit:junit:4.12'
+        compile 'com.android.support:appcompat-v7:23.1.1'
+        compile(name: 'mylib_splash-debug', ext: 'aar')
+    }
+}
